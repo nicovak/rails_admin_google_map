@@ -65,7 +65,7 @@ Example of JSON stored values, everything is build dynamically and depends on Go
       "latitude":45.5016889,
       "longitude":-73.56725599999999
    },
-   "formatted_addresse":"Montréal, QC, Canada",
+   "formatted_address":"Montréal, QC, Canada",
    "locality":"Montréal",
    "political":"Canada",
    "administrative_area_level_3":"Pointe-Calumet",
@@ -73,6 +73,14 @@ Example of JSON stored values, everything is build dynamically and depends on Go
    "administrative_area_level_1":"Québec",
    "country":"Canada"
 }
+```
+
+Example of usage in a view
+
+```
+<%= u.google_map['location']['latitude'] %>
+<%= u.google_map['country'] %>
+<%= u.google_map['formatted_address'] %>
 ```
 
 ## License

@@ -43,7 +43,7 @@
       latitude: location.lat(),
       longitude: location.lng()
     };
-    final_datas.formatted_addresse = place.formatted_address;
+    final_datas.formatted_address = place.formatted_address;
     for (var i in place.address_components) {
       var component = place.address_components[i];
       for (var j in component.types) {
