@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/rails_admin_google_map.svg)](https://badge.fury.io/rb/rails_admin_google_map)
+
 # RailsAdminGoogleMap
 Implementation of user friendly google map field in rails_admin.
 Any suggestions are welcome.
