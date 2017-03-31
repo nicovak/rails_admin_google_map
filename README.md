@@ -47,7 +47,7 @@ end
 #### RailsAdmin configuration
 ```ruby
 RailsAdmin.config do |config|
-  config.model Point do
+  config.model User do
     edit do
       field :google_map, :google_map do
         google_api_key 'APIKEY'
@@ -59,7 +59,7 @@ RailsAdmin.config do |config|
 end
 ```
 
-Example of JSON stored values, everything is build dynamically and depends on Google return.
+Example of JSON stored values, everything is built dynamically and depends on Google return.
 
 ```javascript
 {
