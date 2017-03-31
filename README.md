@@ -2,11 +2,28 @@
 Implementation of user friendly google map field in rails_admin.
 Any suggestions are welcome.
 
-![Example](http://imgur.com/a/dvHFR)
+![Example](http://i.imgur.com/ZlxMvZK.png)
 
 ## TODO
 - [ ] Test with multiple google map field within the same model
 - [ ] More Google map options
+
+## Installation
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'rails_admin_google_map'
+```
+
+And then execute:
+```bash
+$ bundle
+```
+
+Or install it yourself as:
+```bash
+$ gem install rails_admin_google_map
+```
 
 ## Usage
 Strategy: using a serialized field to store all google map data. We store all datas return
@@ -56,23 +73,6 @@ Example of JSON stored values, everything is build dynamically and depends on Go
    "administrative_area_level_1":"Québec",
    "country":"Canada"
 }
-```
-
-## Installation
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rails_admin_google_map'
-```
-
-And then execute:
-```bash
-$ bundle
-```
-
-Or install it yourself as:
-```bash
-$ gem install rails_admin_google_map
 ```
 
 ## License
