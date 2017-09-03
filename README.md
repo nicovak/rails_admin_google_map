@@ -28,7 +28,7 @@ $ gem install rails_admin_google_map
 ```
 
 ## Usage
-Strategy: use a serialized field to store all datas returned by Google.
+Strategy: using a serialized field to store all google map data. We store all datas return
 
 ### Migration example:
 ```ruby
@@ -47,7 +47,7 @@ end
 #### RailsAdmin configuration
 ```ruby
 RailsAdmin.config do |config|
-  config.model User do
+  config.model Point do
     edit do
       field :google_map, :google_map do
         google_api_key 'APIKEY'
@@ -59,7 +59,7 @@ RailsAdmin.config do |config|
 end
 ```
 
-Example of JSON stored values, everything is built dynamically.
+Example of JSON stored values, everything is build dynamically and depends on Google return.
 
 ```javascript
 {

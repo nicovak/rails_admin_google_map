@@ -1,18 +1,17 @@
-<%= form.send :text_field, nil, name: '_search', id: field.dom_name + '_search', class: 'form-control', style: 'width: 100%; border-radius: 0;', value: '' %>
+<%= form.send :text_field, nil, name:'_search', id: field.dom_name + '_search', class: 'form-control', style: 'width: 100%; border-radius: 0;', value: '' %>
 <div class="ra-google-map-container" id="<%= field.dom_name %>" style="width:100%; min-height:350px"></div>
 <%= form.send :hidden_field, field.method_name, id: form.options[:as].to_s + '_' + field.name.to_s, value: field.form_value %>
 
 <script type="text/javascript">
   if(!(typeof google === 'object' && typeof google.maps === 'object')) {
-    var url = 'https://maps.googleapis.com/maps/api/js?key=<%= field.google_api_key %>&language=<%= field.locale %>&libraries=<%= field.libs %>&callback=initMap';
+    var url = 'https://maps.googleapis.com/maps/api/js?key=<%= field.google_api_key %>&language=<%= field.locale %>&libraries=places&callback=initMap';
     $.getScript(url);
   } else {
     initMap();
   }
-
   var map = {};
   var markers;
-
+  
   function initMap() {
     markers = [];
     var myOptions = {
@@ -23,9 +22,7 @@
     };
     map = new google.maps.Map(document.getElementById("<%= field.dom_name %>"), myOptions);
     document.getElementById("<%= field.dom_name + '_search' %>").value = '';
-    google.maps.event.addListener(map, 'click', onPlaceChanged);
     initializeAutocomplete('<%= field.dom_name %>_search');
-
     function initializeAutocomplete(id) {
       var element = document.getElementById(id);
       if (element) {
@@ -33,44 +30,32 @@
         google.maps.event.addListener(autocomplete, 'place_changed', onPlaceChanged);
       }
     }
-
     updateMarker();
   }
 
-  function onPlaceChanged(geoEvent) {
+  function onPlaceChanged() {
     cleanAllMarkers();
-    var final_datas = {};
-    if(geoEvent === undefined) {
-      var place = this.getPlace();
+    var final_datas = {}
+    var place = this.getPlace();
 
-      if (place.length === 0) {
-        return;
-      }
-
-      var location = place.geometry.location;
-      final_datas.location = {
-        latitude: location.lat(),
-        longitude: location.lng()
-      };
-      final_datas.formatted_address = place.formatted_address;
-      document.getElementById("<%= form.options[:as].to_s + '_' + field.name.to_s %>").value = JSON.stringify(final_datas);
-      updateMarker();
-    } else {
-      geocoder = new google.maps.Geocoder();
-      geocoder.geocode( { 'location': geoEvent.latLng}, function(results, status) {
-        if (status == 'OK') {
-          final_datas.formatted_address = results[0].formatted_address;
-          final_datas.location = {
-            latitude: geoEvent.latLng.lat(),
-            longitude: geoEvent.latLng.lng()
-          };
-          document.getElementById("<%= form.options[:as].to_s + '_' + field.name.to_s %>").value = JSON.stringify(final_datas);
-          updateMarker();
-        }
-      });
-
+    if (place.length == 0) {
+      return;
     }
 
+    var location = place.geometry.location;
+    final_datas.location = {
+      latitude: location.lat(),
+      longitude: location.lng()
+    };
+    final_datas.formatted_address = place.formatted_address;
+    for (var i in place.address_components) {
+      var component = place.address_components[i];
+      for (var j in component.types) {
+        final_datas[component.types[j]] = component.long_name;
+      }
+    }
+    document.getElementById("<%= form.options[:as].to_s + '_' + field.name.to_s %>").value = JSON.stringify(final_datas);
+    updateMarker();
   }
 
   function updateMarker() {
@@ -82,7 +67,7 @@
           map: map
         });
         markers.push(marker);
-        map.panTo(new google.maps.LatLng(json.location.latitude, json.location.longitude));
+        map.setCenter(new google.maps.LatLng(json.location.latitude, json.location.longitude));
       }
     }
   }
