@@ -53,6 +53,7 @@ RailsAdmin.config do |config|
         google_api_key 'APIKEY'
         default_latitude -34.0
         default_longitude 151.0
+        locale 'en'
       end
     end
   end
