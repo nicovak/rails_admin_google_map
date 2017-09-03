@@ -1,0 +1,29 @@
+<%- field = local_assigns[:field] %>
+<div class="ra-google-map-container" id="google_maps_container" style="width:100%; min-height:350px"></div>
+
+<script type="text/javascript">
+  if(!(typeof google === 'object' && typeof google.maps === 'object')) {
+    var url = 'https://maps.googleapis.com/maps/api/js?key=<%= field.google_api_key %>&language=<%= field.locale %>&libraries=places&callback=initMap';
+    $.getScript(url);
+  } else {
+    initMap();
+  }
+
+  var map = {};
+  var markers;
+
+  function initMap() {
+    var myOptions = {
+      zoom: 15,
+      center: new google.maps.LatLng(<%= field.value['location']['latitude'] %>, <%= field.value['location']['longitude'] %>),
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      scrollwheel: false
+    };
+    map = new google.maps.Map(document.getElementById("google_maps_container"), myOptions);
+
+    new google.maps.Marker({
+      position: new google.maps.LatLng(<%= field.value['location']['latitude'] %>, <%= field.value['location']['longitude'] %>),
+      map: map
+    });
+  }
+</script>

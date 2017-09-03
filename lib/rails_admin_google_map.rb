@@ -43,7 +43,22 @@ module RailsAdmin
           end
 
           register_instance_option :formatted_value do
-            value.present? ? JSON.pretty_generate(value) : nil
+            if bindings[:controller].action_name == 'show'
+              render do
+                bindings[:view].render(partial: "rails_admin/main/google_map",
+                                       locals: { field: self })
+              end.call
+            else
+              value.present? ? JSON.pretty_generate(value) : nil
+            end
+          end
+
+          register_instance_option(:libs) do
+            %w( places ).join(',')
+          end
+
+          register_instance_option(:locale) do
+            'en'
           end
 
           def dom_name
