@@ -68,6 +68,10 @@
         });
         markers.push(marker);
         map.setCenter(new google.maps.LatLng(json.location.latitude, json.location.longitude));
+
+        if(document.getElementById("<%= field.dom_name %>_search").value.length == 0){
+          document.getElementById("<%= field.dom_name %>_search").value = json.formatted_address;
+        }
       }
     }
   }
