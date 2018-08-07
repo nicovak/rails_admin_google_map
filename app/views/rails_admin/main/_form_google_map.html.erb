@@ -11,7 +11,7 @@
   }
   var map = {};
   var markers;
-  
+
   function initMap() {
     markers = [];
     var myOptions = {
@@ -23,11 +23,15 @@
     map = new google.maps.Map(document.getElementById("<%= field.dom_name %>"), myOptions);
     document.getElementById("<%= field.dom_name + '_search' %>").value = '';
     initializeAutocomplete('<%= field.dom_name %>_search');
+
     function initializeAutocomplete(id) {
       var element = document.getElementById(id);
-      if (element) {
-        var autocomplete = new google.maps.places.Autocomplete(element, {types: ['geocode']});
-        google.maps.event.addListener(autocomplete, 'place_changed', onPlaceChanged);
+      var searchBox = new google.maps.places.SearchBox(element);
+      if (searchBox) {
+        map.addListener('bounds_changed', function() {
+          searchBox.setBounds(map.getBounds());
+        });
+        searchBox.addListener('places_changed', onPlaceChanged);
       }
     }
     updateMarker();
@@ -36,7 +40,8 @@
   function onPlaceChanged() {
     cleanAllMarkers();
     var final_datas = {}
-    var place = this.getPlace();
+    var places = this.getPlaces();
+    var place = places[0]
 
     if (place.length == 0) {
       return;
@@ -54,25 +59,18 @@
         final_datas[component.types[j]] = component.long_name;
       }
     }
-    document.getElementById("<%= form.options[:as].to_s + '_' + field.name.to_s %>").value = JSON.stringify(final_datas);
-    updateMarker();
+    updateMarker(final_datas);
+
   }
 
-  function updateMarker() {
-    if (document.getElementById("<%= form.options[:as].to_s + '_' + field.name.to_s %>").value.length > 0) {
-      var json = JSON.parse(document.getElementById("<%= form.options[:as].to_s + '_' + field.name.to_s %>").value);
-      if (json.location) {
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(json.location.latitude, json.location.longitude),
-          map: map
-        });
-        markers.push(marker);
-        map.setCenter(new google.maps.LatLng(json.location.latitude, json.location.longitude));
-
-        if(document.getElementById("<%= field.dom_name %>_search").value.length == 0){
-          document.getElementById("<%= field.dom_name %>_search").value = json.formatted_address;
-        }
-      }
+  function updateMarker(json) {
+    if (json && json.location) {
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(json.location.latitude, json.location.longitude),
+        map: map
+      });
+      markers.push(marker);
+      map.setCenter(new google.maps.LatLng(json.location.latitude, json.location.longitude));
     }
   }
 
