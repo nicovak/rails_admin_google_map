@@ -1,7 +1,7 @@
 <%= form.send :text_field, nil, name:'_search', id: field.dom_name + '_search', class: 'form-control', style: 'width: 100%; border-radius: 0;', value: '' %>
 <div class="ra-google-map-container" id="<%= field.dom_name %>" style="width:100%; min-height:350px"></div>
 <%= form.send :hidden_field, field.method_name, id: form.options[:as].to_s + '_' + field.name.to_s, value: field.form_value %>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
   if(!(typeof google === 'object' && typeof google.maps === 'object')) {
     var url = 'https://maps.googleapis.com/maps/api/js?key=<%= field.google_api_key %>&language=<%= field.locale %>&libraries=places&callback=initMap';
@@ -26,8 +26,17 @@
     function initializeAutocomplete(id) {
       var element = document.getElementById(id);
       if (element) {
-        var autocomplete = new google.maps.places.Autocomplete(element, {types: ['geocode']});
+        console.log("map", map)
+        console.log("map.getBounds()", map.getBounds())
+        var autocomplete = new google.maps.places.Autocomplete(element, {types: ['establishment'], bounds: map.getBounds()});
         google.maps.event.addListener(autocomplete, 'place_changed', onPlaceChanged);
+
+        map.addListener('bounds_changed', function() {
+          console.log("bounds changed")
+          console.log("map.getBounds()", map.getBounds())
+          console.log("autocomplete", autocomplete)
+          autocomplete.setBounds(map.getBounds());
+        });
       }
     }
     updateMarker();

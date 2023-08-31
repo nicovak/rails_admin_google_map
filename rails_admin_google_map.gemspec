@@ -1,4 +1,6 @@
-$LOAD_PATH.push File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+
+$LOAD_PATH.push File.expand_path('lib', __dir__)
 
 # Maintain your gem's version:
 require 'rails_admin_google_map/version'
@@ -16,5 +18,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  s.add_dependency 'rails', ['>= 4.0', '< 7']
+  s.add_dependency 'rails', ['>= 4.0', '< 8']
 end
