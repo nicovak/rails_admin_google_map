@@ -1,15 +1,16 @@
 <%= form.send :text_field, nil, name:'_search', id: field.dom_name + '_search', class: 'form-control', style: 'width: 100%; border-radius: 0;', value: '' %>
 <div class="ra-google-map-container" id="<%= field.dom_name %>" style="width:100%; min-height:350px"></div>
 <%= form.send :hidden_field, field.method_name, id: form.options[:as].to_s + '_' + field.name.to_s, value: field.form_value %>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
+  var map = {};
   if(!(typeof google === 'object' && typeof google.maps === 'object')) {
     var url = 'https://maps.googleapis.com/maps/api/js?key=<%= field.google_api_key %>&language=<%= field.locale %>&libraries=places&callback=initMap';
     $.getScript(url);
   } else {
     initMap();
   }
-  var map = {};
+  
   var markers;
   
   function initMap() {
@@ -20,14 +21,24 @@
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       scrollwheel: false
     };
+
     map = new google.maps.Map(document.getElementById("<%= field.dom_name %>"), myOptions);
     document.getElementById("<%= field.dom_name + '_search' %>").value = '';
-    initializeAutocomplete('<%= field.dom_name %>_search');
+
+    google.maps.event.addListenerOnce(map, 'idle', function() {
+      // Now it's safe to call getBounds()
+      initializeAutocomplete('<%= field.dom_name %>_search');
+    });
+
     function initializeAutocomplete(id) {
       var element = document.getElementById(id);
       if (element) {
-        var autocomplete = new google.maps.places.Autocomplete(element, {types: ['geocode']});
+        var autocomplete = new google.maps.places.Autocomplete(element);
         google.maps.event.addListener(autocomplete, 'place_changed', onPlaceChanged);
+
+        google.maps.event.addListener('bounds_changed', function() {
+          autocomplete.setBounds(map.getBounds());
+        });
       }
     }
     updateMarker();
@@ -43,6 +54,8 @@
     }
 
     var location = place.geometry.location;
+    final_datas.name = place.name;
+    final_datas.url = place.url;
     final_datas.location = {
       latitude: location.lat(),
       longitude: location.lng()
@@ -70,7 +83,9 @@
         map.setCenter(new google.maps.LatLng(json.location.latitude, json.location.longitude));
 
         if(document.getElementById("<%= field.dom_name %>_search").value.length == 0){
-          document.getElementById("<%= field.dom_name %>_search").value = json.formatted_address;
+          var value = json.formatted_address;
+          if (json.name) value = json.name + ", " + value;
+          document.getElementById("<%= field.dom_name %>_search").value = value;
         }
       }
     }

@@ -1,7 +1,8 @@
 <%- field = local_assigns[:field] %>
 <div class="ra-google-map-container" id="google_maps_container" style="width:100%; min-height:350px"></div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
+  var map = {};
   if(!(typeof google === 'object' && typeof google.maps === 'object')) {
     var url = 'https://maps.googleapis.com/maps/api/js?key=<%= field.google_api_key %>&language=<%= field.locale %>&libraries=places&callback=initMap';
     $.getScript(url);
@@ -9,7 +10,6 @@
     initMap();
   }
 
-  var map = {};
   var markers;
 
   function initMap() {
